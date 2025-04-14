@@ -210,11 +210,7 @@ def api_get_rubrics():
 def main():
     #db_session.global_init(f"sqlite:///db.db")
     db_session.global_init(f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
-    db_sess = db_session.create_session()
-    db_sess.add(Achievements(id=1, title="How it big", points=10, description="Visit this"))
-    db_sess.add(Achievements(id=2, title="How it cool", points=10, description="Visit that"))
-    db_sess.add(Achievements(id=3, title="How it ok", points=10, description="Visit nor this nor that"))
-    db_sess.commit()
+
 
 if __name__ == '__main__':
     main()
