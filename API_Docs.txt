@@ -14,17 +14,18 @@
 {"error": "login should be specified"}
 {"error": "password should be specified"}
 {"error": "no user found or invalid password"}
-{"ok": "logged in"}
+{"ok": {"token": access_token}}
 
 ---------------------------------------------------------------------------------------------------
 
 /api/logout
 
 {"error": "user not logged in"}
-{"ok": "user logged out"}
+{"ok": "token revoked"}
 
 ---------------------------------------------------------------------------------------------------
 
+# Требует токен
 /api/profile
 
 {"error": "user not logged in"}
@@ -54,6 +55,7 @@
 {"ok": [{"id": 0, "name": "имя", "points": 0, "description": "За что и почему"}]}
 ---------------------------------------------------------------------------------------------------
 
+# Требует токен
 /api/eran_achievement?id=id достижения
 
 {"error": "id should be specified"}

@@ -1,33 +1,61 @@
 import os
 
+from datetime import timedelta, datetime, timezone
+
 from data import db_session
 from data.users import User
 from data.achievements import Achievements
+from data.token_blocklist import TokenBlocklist
 
 from APIs.TwoGis import TwoGis
 
 from dotenv import load_dotenv
 
 from flask import Flask, request
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_jwt_extended import create_access_token, current_user, jwt_required, JWTManager, get_jwt
+from flask_cors import CORS
+
+ACCESS_EXPIRES = timedelta(hours=1)
 
 load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('KEY')
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+
+app.config['SECRET_KEY'] = os.getenv('KEY')
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_KEY')
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
+
+jwt = JWTManager(app)
+
+cors = CORS(app)
 
 twoGis = TwoGis(os.getenv('2GIS_API_KEY'))
 
-@login_manager.user_loader
-def load_user(user_id):
-    db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.id
 
-@login_manager.unauthorized_handler
-def unauthorized():
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    db_sess = db_session.create_session()
+    return db_sess.query(User).filter_by(id=identity).one_or_none
+
+@jwt.token_in_blocklist_loader
+def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
+    jti = jwt_payload["jti"]
+    db_sess = db_session.create_session()
+    token = db_sess.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
+    return token is not None
+
+@jwt.unauthorized_loader
+def unauthorized(e):
     return {"error": "user not logged in"}
+
+@jwt.expired_token_loader
+def unauthorized(e):
+    return {"error": "user not logged in"}
+
 @app.route('/')
 def home():
     return {"home": "not exists"}
@@ -47,6 +75,7 @@ def api_register_user():
     db_sess = db_session.create_session()
 
     if db_sess.query(User).filter(User.login == login).first():
+        db_sess.close()
         return {"error": "login already exists"}
 
     user = User(login=login)
@@ -72,21 +101,26 @@ def api_login_user():
     user = db_sess.query(User).filter(User.login == login).first()
 
     if user and user.check_password(password):
-        login_user(user)
-        return {"ok": "logged in"}
+        access_token = create_access_token(identity=user)
+        return {"ok": {"token": access_token}}
 
     return {"error": "no user found or invalid password"}
 
 @app.route("/api/logout")
-@login_required
+@jwt_required()
 def api_logout():
-    logout_user()
-    return {"ok": "user logged out"}
+    jti = get_jwt()["jti"]
+    now = datetime.now(timezone.utc)
+    db_sess = db_session.create_session()
+    db_sess.add(TokenBlocklist(jti=jti, created_at=now))
+    db_sess.commit()
+    return {"ok": "token revoked"}
 
 @app.route('/api/profile')
-@login_required
+@jwt_required()
 def api_user_profile():
     achievements = []
+
     for i in current_user.achievements:
         achievements.append({"id": i.id, "name": i.title, "points": i.points, "description": i.description})
     return {"ok": {"login": current_user.login, "points": current_user.points, "achievements": achievements}}
@@ -101,7 +135,7 @@ def api_achievements():
 
 
 @app.route('/api/eran_achievement')
-@login_required
+@jwt_required()
 def api_eran_achievement():
     args = request.args
 
@@ -117,6 +151,7 @@ def api_eran_achievement():
     achievement = db_sess.query(Achievements).filter(Achievements.id == achievement_id).first()
 
     if achievement is None:
+        db_sess.close()
         return {"error": "achievement with requested id does not exist"}
 
     user.achievements.append(achievement)

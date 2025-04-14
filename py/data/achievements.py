@@ -1,12 +1,11 @@
 import sqlalchemy
-from flask_login import UserMixin
-from sqlalchemy import orm, Sequence
+from sqlalchemy import Sequence
 from sqlalchemy_serializer import SerializerMixin
 
 from .db_session import SqlAlchemyBase
 
 
-class Achievements(SqlAlchemyBase, UserMixin, SerializerMixin):
+class Achievements(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'achievements'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, Sequence("achievements_seq"), primary_key=True)
