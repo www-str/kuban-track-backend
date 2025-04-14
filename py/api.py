@@ -200,6 +200,29 @@ def api_find_place():
 
     return result
 
+@app.route('/api/find_branch', methods=['GET', 'POST'])
+def api_find_branch():
+    args = request.args
+
+    city = args.get('city', None)
+    if city is None:
+        return generate_error_response("city should be specified")
+
+    q = args.get('q', None)
+    if q is None:
+        return generate_error_response("rubric should be specified")
+
+    region = twoGis.find_region_id(city)
+    if region == 0:
+        return generate_error_response("Fail to find region")
+
+    result = twoGis.find_branch_in_region(q, None, region)
+
+    if result.get("error", None) is not None:
+        return generate_error_response(result["error"])
+
+    return result
+
 RUBRICS = [{"title": "Casino", "content": "Казино"},
            {"title": "Restaurant", "content": "Ресторан"},
            {"title": "Hotel", "content": "Отель"},

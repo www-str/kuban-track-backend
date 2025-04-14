@@ -89,6 +89,21 @@ class TwoGis(object):
             return {"error": "Fail to find rubric",
                     "content": json["meta"]["error"]["message"]}
 
+
+    def find_branch_in_region(self, target, location=None, region_id=23):
+        url = f"https://catalog.api.2gis.com/3.0/items?q={target}&key={self.api_key}&locale=en_RU&region_id={region_id}&fields=items.point"
+        if location is not None:
+            url += f"&location={location}"
+        response = requests.get(url)
+
+        json = response.json()
+        status_code = json["meta"]["code"]
+        if status_code == 200:
+            return {"ok": json["result"]["items"]}
+        else:
+            return {"error": "Fail to find branch",
+                    "content": json["meta"]["error"]["message"]}
+
     def get_item_info_by_id(self, item_id):
         url = f"https://catalog.api.2gis.com/3.0/items/byid?id={item_id}&key={self.api_key}&locale=en_RU"
         response = requests.get(url)
