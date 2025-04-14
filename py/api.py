@@ -146,7 +146,7 @@ def api_find_place():
 
     return twoGis.find_places_in_region(q, None, region)
 
-RUBRICS = ["Казино", "Ресторан", ""]
+RUBRICS = ["Казино", "Ресторан", "Отель", "Иподром", "Бары", "Караоке"]
 
 @app.route('/api/get_rubrics')
 def api_get_rubrics():
