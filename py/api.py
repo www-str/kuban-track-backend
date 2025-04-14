@@ -200,7 +200,12 @@ def api_find_place():
 
     return result
 
-RUBRICS = ["Казино", "Ресторан", "Отель", "Иподром", "Бары", "Караоке"]
+RUBRICS = [{"title": "Casino", "content": "Казино"},
+           {"title": "Restaurant", "content": "Ресторан"},
+           {"title": "Hotel", "content": "Отель"},
+           {"title": "Hippodrome", "content": "Ипподром"},
+           {"title": "Bars", "content": "Бары"},
+           {"title": "Karaoke", "content": "Караоке"}]
 
 @app.route('/api/get_rubrics', methods=['GET', 'POST'])
 def api_get_rubrics():
