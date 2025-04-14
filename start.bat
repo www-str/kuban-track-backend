@@ -1,0 +1,1 @@
+venv\Scripts\flask run --no-debugger
