@@ -74,7 +74,7 @@ class TwoGis(object):
         print( json["result"]["items"])
         best_match_id = json["result"]["items"][0]["id"]
 
-        url = f"https://catalog.api.2gis.com/3.0/items?rubric_id={best_match_id}&key={self.api_key}&locale=en_RU"
+        url = f"https://catalog.api.2gis.com/3.0/items?rubric_id={best_match_id}&key={self.api_key}&locale=en_RU&fields=items.point"
         if location is not None:
             url += f"&location={location}"
         response = requests.get(url)
@@ -86,3 +86,16 @@ class TwoGis(object):
         else:
             return {"error": "Fail to find rubric",
                     "content": json["meta"]["error"]["message"]}
+
+    def get_item_info_by_id(self, item_id):
+        url = f"https://catalog.api.2gis.com/3.0/items/byid?id={item_id}&key={self.api_key}&locale=en_RU"
+        response = requests.get(url)
+
+        json = response.json()
+        status_code = json["meta"]["code"]
+        if status_code == 200:
+            return json
+        else:
+            return {"error": "Fail to find rubric",
+                    "content": json["meta"]["error"]["message"]}
+        pass
