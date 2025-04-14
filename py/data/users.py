@@ -1,12 +1,25 @@
 import datetime
 import sqlalchemy
-from sqlalchemy import orm, Sequence
+from sqlalchemy import Sequence
 from sqlalchemy_serializer import SerializerMixin
 
 from .db_session import SqlAlchemyBase
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
+from typing import List
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import relationship
+
+
+from .achievements import Achievements
+
+userAchievements = sqlalchemy.Table(
+    "userAchievements",
+    SqlAlchemyBase.metadata,
+    sqlalchemy.Column("users", sqlalchemy.ForeignKey("users.id")),
+    sqlalchemy.Column("achievements", sqlalchemy.ForeignKey("achievements.id")),
+)
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
@@ -17,6 +30,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String(length=2000), nullable=False)
 
     points = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, default=0)
+
+    achievements: Mapped[List[Achievements]] = relationship(secondary=userAchievements)
 
     def __repr__(self):
         return f'Имя пользователя: {self.login}'

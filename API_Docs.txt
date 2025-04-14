@@ -28,6 +28,15 @@
 
 ---------------------------------------------------------------------------------------------------
 
+/api/find_place?city=Город&q=запрос(одно слово, типо Казино, ресторан)
+
+{"error": "Fail to find region"}
+{"error": "Fail to find rubric in region", "content": "Внутрення 2gis ошибка"}
+{"error": "Fail to find rubric", "content": "Внутрення 2gis ошибка"}
+[{'address_comment': '1 этаж', 'address_name': 'Эстонская, 51', 'building_name': 'Казино Сочи', 'full_name': 'Эстосадок, Казино Сочи', 'id': '70000001025629098', 'name': 'Казино Сочи', 'purpose_name': 'Entertainment institution', 'type': 'branch'}]
+
+---------------------------------------------------------------------------------------------------
+
 /
 
 {"home": "not exists"}

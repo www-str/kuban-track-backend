@@ -63,7 +63,7 @@ class TwoGis(object):
         json = response.json()
         status_code = json["meta"]["code"]
         if status_code != 200:
-            return {"error": "Fail to find rubric",
+            return {"error": "Fail to find rubric in region",
                     "content": json["meta"]["error"]["message"]}
 
         print( json["result"]["items"])
@@ -79,5 +79,5 @@ class TwoGis(object):
         if status_code == 200:
             return json["result"]["items"]
         else:
-            return {"error": "Fail to find rubric in region",
+            return {"error": "Fail to find rubric",
                     "content": json["meta"]["error"]["message"]}
