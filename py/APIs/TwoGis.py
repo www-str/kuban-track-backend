@@ -74,7 +74,6 @@ class TwoGis(object):
             return {"error": "Fail to find rubric in region",
                     "content": json["meta"]["error"]["message"]}
 
-        print( json["result"]["items"])
         best_match_id = json["result"]["items"][0]["id"]
 
         url = f"https://catalog.api.2gis.com/3.0/items?rubric_id={best_match_id}&key={self.api_key}&locale=en_RU&fields=items.point"
@@ -101,4 +100,3 @@ class TwoGis(object):
         else:
             return {"error": "Fail to find rubric",
                     "content": json["meta"]["error"]["message"]}
-        pass
