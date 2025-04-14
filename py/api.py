@@ -2,8 +2,6 @@ import os
 
 from datetime import timedelta, datetime, timezone
 
-from sqlalchemy import URL
-
 from data import db_session
 from data.users import User
 from data.achievements import Achievements
@@ -184,6 +182,6 @@ def api_get_rubrics():
     return {"ok": RUBRICS}
 
 def main():
-    db_session.global_init(f"postgres+psycopg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
+    db_session.global_init(f"postgres+psycopg2://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
 
 main()
