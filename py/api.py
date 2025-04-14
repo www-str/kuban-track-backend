@@ -11,14 +11,15 @@ from APIs.TwoGis import TwoGis
 
 from dotenv import load_dotenv
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_jwt_extended import create_access_token, current_user, jwt_required, JWTManager, get_jwt
 
 ACCESS_EXPIRES = timedelta(hours=1)
 
 load_dotenv()
 app = Flask(__name__)
-
+CORS(app)
 jwt = JWTManager(app)
 
 app.config['SECRET_KEY'] = os.getenv('KEY')
@@ -26,6 +27,18 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 app.config["JWT_VERIFY_SUB"] = False
 
+@app.after_request
+def add_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
+@app.before_request
+def before_request():
+    headers = {'Access-Control-Allow-Origin': '*',
+               'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+               'Access-Control-Allow-Headers': 'Content-Type'}
+    if request.method.lower() == 'options':
+        return jsonify(headers), 200
 
 twoGis = TwoGis(os.getenv('2GIS_API_KEY'))
 
@@ -178,9 +191,10 @@ def api_get_rubrics():
     return {"ok": RUBRICS}
 
 def main():
+    #db_session.global_init(f"sqlite:///db.db")
     db_session.global_init(f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
 
 if __name__ == '__main__':
     main()
-    app.run(host='0.0.0.0',port=8090)
+    app.run(host='0.0.0.0', port=8090)
 
