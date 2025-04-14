@@ -51,10 +51,6 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
 def unauthorized(e):
     return {"error": "user not logged in"}
 
-@app.route('/')
-def home():
-    return {"home": "not exists"}
-
 @app.route('/api/register')
 def api_register_user():
     args = request.args
@@ -182,6 +178,9 @@ def api_get_rubrics():
     return {"ok": RUBRICS}
 
 def main():
-    db_session.global_init(f"postgres+psycopg2://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
+    db_session.global_init(f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
+    app.run(host='0.0.0.0', port=8090, debug=False)
 
-main()
+if __name__ == "__name__":
+    main()
+

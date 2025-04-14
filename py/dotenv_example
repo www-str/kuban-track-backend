@@ -5,3 +5,4 @@ DB_PORT=порт
 DB_USER=пользователь
 DB_PASSWORD=пароль
 DB_NAME=имя бд
+DB_HOST=имя хоста бд
