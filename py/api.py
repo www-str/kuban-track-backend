@@ -20,14 +20,15 @@ ACCESS_EXPIRES = timedelta(hours=1)
 load_dotenv()
 app = Flask(__name__)
 
+jwt = JWTManager(app)
+
+cors = CORS(app)
 
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
+app.config["JWT_VERIFY_SUB"] = False
 
-jwt = JWTManager(app)
-
-cors = CORS(app)
 
 twoGis = TwoGis(os.getenv('2GIS_API_KEY'))
 
@@ -120,10 +121,10 @@ def api_logout():
 @jwt_required()
 def api_user_profile():
     achievements = []
-
-    for i in current_user.achievements:
+    current_user_object = current_user()
+    for i in current_user_object.achievements:
         achievements.append({"id": i.id, "name": i.title, "points": i.points, "description": i.description})
-    return {"ok": {"login": current_user.login, "points": current_user.points, "achievements": achievements}}
+    return {"ok": {"login": current_user_object.login, "points": current_user_object.points, "achievements": achievements}}
 
 @app.route('/api/achievements')
 def api_achievements():
@@ -143,11 +144,13 @@ def api_eran_achievement():
     if achievement_id is None:
         return {"error": "id should be specified"}
 
-    if current_user.achievements.filter(Achievements.id == achievement_id).first() is not None:
+    current_user_object = current_user()
+
+    if current_user_object.achievements.filter(Achievements.id == achievement_id).first() is not None:
         return {"error": "user already earned it"}
 
     db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == current_user.id).first()
+    user = db_sess.query(User).filter(User.id == current_user_object.id).first()
     achievement = db_sess.query(Achievements).filter(Achievements.id == achievement_id).first()
 
     if achievement is None:
