@@ -2,25 +2,25 @@
 
 /api/register?login=логин&password=пароль
 
-{"error": "login should be specified"}
-{"error": "password should be specified"}
-{"error": "login already exists"}
+{"error": "login should be specified"} // 418
+{"error": "password should be specified"} // 418
+{"error": "login already exists"} // 418
 {"ok": "registered"}
 
 ---------------------------------------------------------------------------------------------------
 
 /api/login?login=логин&password=пароль
 
-{"error": "login should be specified"}
-{"error": "password should be specified"}
-{"error": "no user found or invalid password"}
+{"error": "login should be specified"} // 418
+{"error": "password should be specified"} // 418
+{"error": "no user found or invalid password"} // 418
 {"ok": {"token": access_token}}
 
 ---------------------------------------------------------------------------------------------------
 
 /api/logout
 
-{"error": "user not logged in"}
+{"error": "user not logged in"} // 418
 {"ok": "token revoked"}
 
 ---------------------------------------------------------------------------------------------------
@@ -28,18 +28,18 @@
 # Требует токен
 /api/profile
 
-{"error": "user not logged in"}
+{"error": "user not logged in"} // 418
 {"ok": {"login": "логин", "points": "Кол-во баллов", "achievements": [{"id": 0, "name": "имя", "points": 0, "description": "За что и почему"}] }}
 
 ---------------------------------------------------------------------------------------------------
 
 /api/find_place?city=Город&q=запрос(одно слово, рубрика)
 
-{"error": "city should be specified"}
-{"error": "rubric should be specified"}
-{"error": "Fail to find region"}
-{"error": "Fail to find rubric in region", "content": "Внутрення 2gis ошибка"}
-{"error": "Fail to find rubric", "content": "Внутрення 2gis ошибка"}
+{"error": "city should be specified"} // 418
+{"error": "rubric should be specified"} // 418
+{"error": "Fail to find region"} // 418
+{"error": "Fail to find rubric in region"} // 418
+{"error": "Fail to find rubric"} // 418
 [{'address_comment': '1 этаж', 'address_name': 'Эстонская, 51', 'building_name': 'Казино Сочи', 'full_name': 'Эстосадок, Казино Сочи', 'id': '70000001025629098', 'name': 'Казино Сочи', 'purpose_name': 'Entertainment institution', 'type': 'branch', 'point': {'lat': 42.986524, 'lon': 47.467185}}]
 
 ---------------------------------------------------------------------------------------------------
@@ -56,17 +56,12 @@
 ---------------------------------------------------------------------------------------------------
 
 # Требует токен
-/api/eran_achievement?id=id достижения
+/api/earn_achievement?id=id достижения
 
-{"error": "id should be specified"}
-{"error": "user already earned it"}
-{"error": "achievement with requested id does not exist"}
+{"error": "id should be specified"} // 418
+{"error": "too big id"} // 418
+{"error": "user already earned it"} // 418
+{"error": "achievement with requested id does not exist"} // 418
 {"ok": "earned"}
-
----------------------------------------------------------------------------------------------------
-
-/
-
-{"home": "not exists"}
 
 ---------------------------------------------------------------------------------------------------

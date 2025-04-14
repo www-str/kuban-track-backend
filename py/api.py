@@ -60,10 +60,16 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     token = db_sess.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
     return token is not None
 
+def generate_error_response(message: str) -> Response:
+    response = Response()
+    response.status_code = 418
+    response.data = {"error": message}
+    return response
+
 @jwt.expired_token_loader
 @jwt.unauthorized_loader
 def unauthorized(e):
-    return {"error": "user not logged in"}
+    return generate_error_response("user not logged in")
 
 @app.route('/api/register', methods=['GET', 'POST'])
 def api_register_user():
@@ -71,17 +77,17 @@ def api_register_user():
 
     login = args.get('login', None)
     if login is None:
-        return {"error": "login should be specified"}
+        return generate_error_response("login should be specified")
 
     password = args.get('password', None)
     if password is None:
-        return {"error": "password should be specified"}
+        return generate_error_response("password should be specified")
 
     db_sess = db_session.create_session()
 
     if db_sess.query(User).filter(User.login == login).first():
         db_sess.close()
-        return {"error": "login already exists"}
+        return generate_error_response("login already exists")
 
     user = User(login=login)
     user.set_password(password)
@@ -95,11 +101,11 @@ def api_login_user():
 
     login = args.get('login', None)
     if login is None:
-        return {"error": "login should be specified"}
+        return generate_error_response("login should be specified")
 
     password = args.get('password', None)
     if password is None:
-        return {"error": "password should be specified"}
+        return generate_error_response("password should be specified")
 
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.login == login).first()
@@ -108,7 +114,7 @@ def api_login_user():
         access_token = create_access_token(identity=user)
         return {"ok": {"token": access_token}}
 
-    return {"error": "no user found or invalid password"}
+    return generate_error_response("no user found or invalid password")
 
 @app.route("/api/logout", methods=['GET', 'POST'])
 @jwt_required()
@@ -138,19 +144,24 @@ def api_achievements():
     return {"ok": achievements}
 
 
-@app.route('/api/eran_achievement', methods=['GET', 'POST'])
+@app.route('/api/earn_achievement', methods=['GET', 'POST'])
 @jwt_required()
 def api_eran_achievement():
     args = request.args
 
     achievement_id = args.get('id', None)
     if achievement_id is None:
-        return {"error": "id should be specified"}
+        return generate_error_response("id should be specified")
+
+    achievement_id = int(achievement_id)
+
+    if achievement_id >= 2147483647:
+        return generate_error_response("too big id")
 
     current_user_object = current_user()
 
     if current_user_object.achievements.filter(Achievements.id == achievement_id).first() is not None:
-        return {"error": "user already earned it"}
+        return generate_error_response("user already earned it")
 
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user_object.id).first()
@@ -158,7 +169,7 @@ def api_eran_achievement():
 
     if achievement is None:
         db_sess.close()
-        return {"error": "achievement with requested id does not exist"}
+        return generate_error_response("achievement with requested id does not exist")
 
     user.achievements.append(achievement)
     user.points += achievement.points
@@ -173,21 +184,26 @@ def api_find_place():
 
     city = args.get('city', None)
     if city is None:
-        return {"error": "city should be specified"}
+        return generate_error_response("city should be specified")
 
     q = args.get('q', None)
     if q is None:
-        return {"error": "rubric should be specified"}
+        return generate_error_response("rubric should be specified")
 
     region = twoGis.find_region_id(city)
     if region == 0:
-        return {"error": "Fail to find region"}
+        return generate_error_response("Fail to find region")
 
-    return twoGis.find_places_in_region(q, None, region)
+    result = twoGis.find_places_in_region(q, None, region)
+
+    if result.get("error", None) is not None:
+        return generate_error_response(result["error"])
+
+    return result
 
 RUBRICS = ["Казино", "Ресторан", "Отель", "Иподром", "Бары", "Караоке"]
 
-@app.route('/api/get_rubrics')
+@app.route('/api/get_rubrics', methods=['GET', 'POST'])
 def api_get_rubrics():
     return {"ok": RUBRICS}
 
