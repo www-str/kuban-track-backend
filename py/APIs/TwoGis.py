@@ -30,6 +30,9 @@ class TwoGis(object):
             self.url += f"&pt={lat},{lon}~k:{'c' if circle else 'p'}~c:{color}~s:{'s' if big_size else 'l'}"
             return self
 
+        def url(self):
+            return self.url
+
         def request(self):
             response = requests.get(self.url)
 

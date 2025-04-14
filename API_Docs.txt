@@ -9,7 +9,7 @@
 
 ---------------------------------------------------------------------------------------------------
 
-/api/login?login=логин&password=пароль&remember=true/false(запомнить меня)
+/api/login?login=логин&password=пароль
 
 {"error": "login should be specified"}
 {"error": "password should be specified"}

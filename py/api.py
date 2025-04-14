@@ -68,13 +68,11 @@ def api_login_user():
     if password is None:
         return {"error": "password should be specified"}
 
-    remember = True if args.get('remember', 'false') == 'true' else False
-
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.login == login).first()
 
     if user and user.check_password(password):
-        login_user(user, remember=remember)
+        login_user(user)
         return {"ok": "logged in"}
 
     return {"error": "no user found or invalid password"}
