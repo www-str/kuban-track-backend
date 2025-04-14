@@ -11,7 +11,7 @@ from APIs.TwoGis import TwoGis
 
 from dotenv import load_dotenv
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, current_user, jwt_required, JWTManager, get_jwt
 
@@ -34,11 +34,12 @@ def add_header(response):
 
 @app.before_request
 def before_request():
-    headers = {'Access-Control-Allow-Origin': '*',
-               'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-               'Access-Control-Allow-Headers': 'Content-Type'}
     if request.method.lower() == 'options':
-        return jsonify(headers), 200
+        response = Response()
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = '*'
+        response.headers['Access-Control-Allow-Headers'] = '*'
+        return response
 
 twoGis = TwoGis(os.getenv('2GIS_API_KEY'))
 
@@ -64,7 +65,7 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
 def unauthorized(e):
     return {"error": "user not logged in"}
 
-@app.route('/api/register')
+@app.route('/api/register', methods=['GET', 'POST'])
 def api_register_user():
     args = request.args
 
@@ -88,7 +89,7 @@ def api_register_user():
     db_sess.commit()
     return {"ok": "registered"}
 
-@app.route('/api/login')
+@app.route('/api/login', methods=['GET', 'POST'])
 def api_login_user():
     args = request.args
 
@@ -109,7 +110,7 @@ def api_login_user():
 
     return {"error": "no user found or invalid password"}
 
-@app.route("/api/logout")
+@app.route("/api/logout", methods=['GET', 'POST'])
 @jwt_required()
 def api_logout():
     jti = get_jwt()["jti"]
@@ -119,7 +120,7 @@ def api_logout():
     db_sess.commit()
     return {"ok": "token revoked"}
 
-@app.route('/api/profile')
+@app.route('/api/profile', methods=['GET', 'POST'])
 @jwt_required()
 def api_user_profile():
     achievements = []
@@ -128,7 +129,7 @@ def api_user_profile():
         achievements.append({"id": i.id, "name": i.title, "points": i.points, "description": i.description})
     return {"ok": {"login": current_user_object.login, "points": current_user_object.points, "achievements": achievements}}
 
-@app.route('/api/achievements')
+@app.route('/api/achievements', methods=['GET', 'POST'])
 def api_achievements():
     achievements = []
     db_sess = db_session.create_session()
@@ -137,7 +138,7 @@ def api_achievements():
     return {"ok": achievements}
 
 
-@app.route('/api/eran_achievement')
+@app.route('/api/eran_achievement', methods=['GET', 'POST'])
 @jwt_required()
 def api_eran_achievement():
     args = request.args
@@ -166,7 +167,7 @@ def api_eran_achievement():
     return {"ok": "earned"}
 
 
-@app.route('/api/find_place')
+@app.route('/api/find_place', methods=['GET', 'POST'])
 def api_find_place():
     args = request.args
 
