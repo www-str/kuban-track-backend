@@ -11,7 +11,7 @@ from APIs.TwoGis import TwoGis
 
 from dotenv import load_dotenv
 
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, current_user, jwt_required, JWTManager, get_jwt
 
@@ -61,9 +61,8 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     return token is not None
 
 def generate_error_response(message: str) -> Response:
-    response = Response()
+    response = jsonify({"error": message})
     response.status_code = 418
-    response.data = {"error": message}
     return response
 
 @jwt.expired_token_loader
