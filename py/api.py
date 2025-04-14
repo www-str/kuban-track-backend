@@ -2,6 +2,8 @@ import os
 
 from datetime import timedelta, datetime, timezone
 
+from sqlalchemy import URL
+
 from data import db_session
 from data.users import User
 from data.achievements import Achievements
@@ -178,9 +180,13 @@ def api_get_rubrics():
     return {"ok": RUBRICS}
 
 def main():
+<<<<<<< HEAD
     db_session.global_init(f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
     app.run(host='0.0.0.0', port=8090, debug=False)
 
 if __name__ == "__name__":
     main()
+=======
+    db_session.global_init(f"postgres+psycopg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
+>>>>>>> parent of fad5226 (Change driver)
 
