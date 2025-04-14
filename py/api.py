@@ -115,13 +115,14 @@ def api_eran_achievement():
         return {"error": "user already earned it"}
 
     db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.id).first()
     achievement = db_sess.query(Achievements).filter(Achievements.id == achievement_id).first()
 
     if achievement is None:
         return {"error": "achievement with requested id does not exist"}
 
-    current_user.achievements.append(achievement)
-    current_user.points += achievement.points
+    user.achievements.append(achievement)
+    user.points += achievement.points
     db_sess.commit()
 
     return {"ok": "earned"}
