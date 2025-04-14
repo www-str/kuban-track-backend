@@ -40,7 +40,7 @@
 {"error": "Fail to find region"} // 418
 {"error": "Fail to find rubric in region"} // 418
 {"error": "Fail to find rubric"} // 418
-[{'address_comment': '1 этаж', 'address_name': 'Эстонская, 51', 'building_name': 'Казино Сочи', 'full_name': 'Эстосадок, Казино Сочи', 'id': '70000001025629098', 'name': 'Казино Сочи', 'purpose_name': 'Entertainment institution', 'type': 'branch', 'point': {'lat': 42.986524, 'lon': 47.467185}}]
+{"ok": [{'address_comment': '1 этаж', 'address_name': 'Эстонская, 51', 'building_name': 'Казино Сочи', 'full_name': 'Эстосадок, Казино Сочи', 'id': '70000001025629098', 'name': 'Казино Сочи', 'purpose_name': 'Entertainment institution', 'type': 'branch', 'point': {'lat': 42.986524, 'lon': 47.467185}}]}
 
 ---------------------------------------------------------------------------------------------------
 

@@ -85,7 +85,7 @@ class TwoGis(object):
         json = response.json()
         status_code = json["meta"]["code"]
         if status_code == 200:
-            return json["result"]["items"]
+            return {"ok": json["result"]["items"]}
         else:
             return {"error": "Fail to find rubric",
                     "content": json["meta"]["error"]["message"]}
