@@ -30,6 +30,8 @@ class TwoGis(object):
         def request(self):
             response = requests.get(self.url)
 
+            if response.status_code != 200:
+                return None
             return response.content
 
     def find_region_id(self, regin):

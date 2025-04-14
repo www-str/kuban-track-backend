@@ -94,6 +94,12 @@ def api_find_place():
 
     return twoGis.find_places_in_region(q, None, region)
 
+RUBRICS = ["Казино", "Ресторан", ""]
+
+@app.route('/api/get_rubrics')
+def api_get_rubrics():
+    return {"ok": RUBRICS}
+
 def main():
     db_session.global_init("sqlite:///db.db")
 
