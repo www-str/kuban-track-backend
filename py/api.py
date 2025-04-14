@@ -8,6 +8,7 @@ from data.achievements import Achievements
 from data.token_blocklist import TokenBlocklist
 
 from APIs.TwoGis import TwoGis
+from APIs.Translator import Translator
 
 from dotenv import load_dotenv
 
@@ -26,6 +27,8 @@ app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_KEY')
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 app.config["JWT_VERIFY_SUB"] = False
+
+translator = Translator()
 
 @app.after_request
 def add_header(response):
@@ -198,6 +201,12 @@ def api_find_place():
     if result.get("error", None) is not None:
         return generate_error_response(result["error"])
 
+    for i in result["ok"]:
+        i['name'] = translator.translate(i['name'], "ru", "en")
+        if i.get('purpose_name', None) is not None:
+            i['purpose_name'] = translator.translate(i['purpose_name'], "ru", "en")
+        i['address_name'] = translator.translate(i['address_name'], "ru", "en")
+
     return result
 
 @app.route('/api/find_branch', methods=['GET', 'POST'])
@@ -220,6 +229,12 @@ def api_find_branch():
 
     if result.get("error", None) is not None:
         return generate_error_response(result["error"])
+
+    for i in result["ok"]:
+        i['name'] = translator.translate(i['name'], "ru", "en")
+        if i.get('purpose_name', None) is not None:
+            i['purpose_name'] = translator.translate(i['purpose_name'], "ru", "en")
+        i['address_name'] = translator.translate(i['address_name'], "ru", "en")
 
     return result
 
