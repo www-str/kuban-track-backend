@@ -20,8 +20,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 twoGis = TwoGis(os.getenv('2GIS_API_KEY'))
-YaJS = YaJS(os.getenv('YA_MAPS_JS_API_KEY'))
-YaStatic = YaStatic(os.getenv('YA_MAPS_STATIC_API_KEY'))
 
 @login_manager.user_loader
 def load_user(user_id):

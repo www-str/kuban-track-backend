@@ -1,4 +1,2 @@
 KEY=секретный ключ
-2GIS_API_KEY=your 2gis api ключ
-YA_MAPS_JS_API_KEY=JavaScript API и HTTP Геокодер
-YA_MAPS_STATIC_API_KEY=Static API Яндекс.Карт
+2GIS_API_KEY=ваш 2gis api ключ
