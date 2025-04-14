@@ -11,21 +11,24 @@ class TwoGis(object):
     class StaticBuilder(object):
         def __init__(self):
             self.url = "https://static.maps.2gis.com/1.0?locale=en_RU"
-            pass
 
         def size(self, w, h, scale=None):
             self.url += f"&s={w}x{h}"
             if scale is not None:
                 self.url += f"@{clamp(scale, 1, 2)}x"
+            return self
 
         def center(self, lat, lon):
             self.url += f"&c={lat},{lon}"
+            return self
 
         def zoom(self, value):
             self.url += f"&z={clamp(value, 1, 18)}"
+            return self
 
         def marker(self, lat, lon, circle=False, color="be", big_size=False):
             self.url += f"&pt={lat},{lon}~k:{'c' if circle else 'p'}~c:{color}~s:{'s' if big_size else 'l'}"
+            return self
 
         def request(self):
             response = requests.get(self.url)

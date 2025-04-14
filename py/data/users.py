@@ -31,7 +31,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
 
     points = sqlalchemy.Column(sqlalchemy.Integer, nullable=False, default=0)
 
-    achievements: Mapped[List[Achievements]] = relationship(secondary=userAchievements)
+    achievements: Mapped[List[Achievements]] = relationship(secondary=userAchievements, lazy='dynamic')
 
     def __repr__(self):
         return f'Имя пользователя: {self.login}'

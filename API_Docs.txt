@@ -2,6 +2,8 @@
 
 /api/register?login=логин&password=пароль
 
+{"error": "login should be specified"}
+{"error": "password should be specified"}
 {"error": "login already exists"}
 {"ok": "registered"}
 
@@ -9,6 +11,8 @@
 
 /api/login?login=логин&password=пароль&remember=true/false(запомнить меня)
 
+{"error": "login should be specified"}
+{"error": "password should be specified"}
 {"error": "no user found or invalid password"}
 {"ok": "logged in"}
 
@@ -24,12 +28,14 @@
 /api/profile
 
 {"error": "user not logged in"}
-{"ok": {"login": "логин", "points": "Кол-во баллов", "achievements": [{"name": "имя", "points": 0, "description": "За что и почему"}] }}
+{"ok": {"login": "логин", "points": "Кол-во баллов", "achievements": [{"id": 0, "name": "имя", "points": 0, "description": "За что и почему"}] }}
 
 ---------------------------------------------------------------------------------------------------
 
 /api/find_place?city=Город&q=запрос(одно слово, рубрика)
 
+{"error": "city should be specified"}
+{"error": "rubric should be specified"}
 {"error": "Fail to find region"}
 {"error": "Fail to find rubric in region", "content": "Внутрення 2gis ошибка"}
 {"error": "Fail to find rubric", "content": "Внутрення 2gis ошибка"}
@@ -40,6 +46,20 @@
 /api/get_rubrics
 
 {"ok": ["Рубрики"]}
+
+---------------------------------------------------------------------------------------------------
+
+/api/achievements
+
+{"ok": [{"id": 0, "name": "имя", "points": 0, "description": "За что и почему"}]}
+---------------------------------------------------------------------------------------------------
+
+/api/eran_achievement?id=id достижения
+
+{"error": "id should be specified"}
+{"error": "user already earned it"}
+{"error": "achievement with requested id does not exist"}
+{"ok": "earned"}
 
 ---------------------------------------------------------------------------------------------------
 
