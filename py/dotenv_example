@@ -1,3 +1,7 @@
 KEY=секретный ключ
 JWT_KEY=секретный ключ для JWT
 2GIS_API_KEY=ваш 2gis api ключ
+DB_PORT=порт
+DB_USER=пользователь
+DB_PASSWORD=пароль
+DB_NAME=имя бд

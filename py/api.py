@@ -2,6 +2,8 @@ import os
 
 from datetime import timedelta, datetime, timezone
 
+from sqlalchemy import URL
+
 from data import db_session
 from data.users import User
 from data.achievements import Achievements
@@ -13,7 +15,6 @@ from dotenv import load_dotenv
 
 from flask import Flask, request
 from flask_jwt_extended import create_access_token, current_user, jwt_required, JWTManager, get_jwt
-from flask_cors import CORS
 
 ACCESS_EXPIRES = timedelta(hours=1)
 
@@ -21,8 +22,6 @@ load_dotenv()
 app = Flask(__name__)
 
 jwt = JWTManager(app)
-
-cors = CORS(app)
 
 app.config['SECRET_KEY'] = os.getenv('KEY')
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_KEY')
@@ -49,11 +48,8 @@ def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
     token = db_sess.query(TokenBlocklist.id).filter_by(jti=jti).scalar()
     return token is not None
 
-@jwt.unauthorized_loader
-def unauthorized(e):
-    return {"error": "user not logged in"}
-
 @jwt.expired_token_loader
+@jwt.unauthorized_loader
 def unauthorized(e):
     return {"error": "user not logged in"}
 
@@ -84,7 +80,6 @@ def api_register_user():
     db_sess.add(user)
     db_sess.commit()
     return {"ok": "registered"}
-
 
 @app.route('/api/login')
 def api_login_user():
@@ -189,6 +184,6 @@ def api_get_rubrics():
     return {"ok": RUBRICS}
 
 def main():
-    db_session.global_init("sqlite:///db.db")
+    db_session.global_init(f"postgres+psycopg://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@localhost:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}")
 
 main()
